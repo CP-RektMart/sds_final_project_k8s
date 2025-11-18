@@ -10,7 +10,8 @@ class ConvertRequest(BaseModel):
     target_format: str
 
 @app.get("/health")
-def
+def health():
+  return {"status": "ok"}
 
 @app.post("/convert")
 def convert_image(request: ConvertRequest):
