@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: file-converter
+  name: web
   namespace: sds
   labels:
-    app: file-converter
+    app: web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: file-converter
+      app: web
   template:
     metadata:
       labels:
-        app: file-converter
+        app: web
     spec:
       containers:
-        - name: file-converter
-          image: teegooodgood/sds-file-converter:latest
+        - name: web
+          image: teegooodgood/sds-web:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 7000
+            - containerPort: 3000
