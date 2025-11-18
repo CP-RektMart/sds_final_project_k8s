@@ -5,8 +5,9 @@ metadata:
 spec:
   selector:
     app: file-converter # must match your deployment labels
+  type: NodePort
   ports:
     - protocol: TCP
       port: 7000
       targetPort: 7000
-  type: ClusterIP
+      nodePort: 30001
