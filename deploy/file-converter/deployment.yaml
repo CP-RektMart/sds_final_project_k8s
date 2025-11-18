@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-converter
+  labels:
+    app: file-converter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-converter
+  template:
+    metadata:
+      labels:
+        app: file-converter
+    spec:
+      containers:
+        - name: file-converter
+          image: teegooodgood/sds-file-converter:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 7000
