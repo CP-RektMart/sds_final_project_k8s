@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bff
+  namespace: sds
   labels:
     app: bff
 spec:
@@ -17,6 +18,9 @@ spec:
       containers:
         - name: bff
           image: teegooodgood/sds-bff:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 7000
+          env:
+            - name: FILE_CONVERTER_URL
+              value: http://file-converter:7000
