@@ -2,15 +2,12 @@ import base64
 from typing import List
 
 import cv2
+import face_recognition
 import numpy as np
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from ultralytics import YOLO
 
 app = FastAPI()
-
-# Load YOLO model (will auto-download on first run)
-model = YOLO("yolov8n.pt")  # Using nano model for speed
 
 
 class ImageRequest(BaseModel):
@@ -37,50 +34,20 @@ async def crop_faces(request: ImageRequest):
         if img is None:
             raise HTTPException(status_code=400, detail="Invalid image data")
 
-        # Run YOLO inference
-        results = model(img, classes=[0], verbose=False)  # class 0 = person
+        image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        # Extract face regions using bounding boxes
+        # detect faces in the image
+        face_locations = face_recognition.face_locations(image)
+
+        # crop faces
         cropped_faces = []
-
-        for result in results:
-            boxes = result.boxes
-
-            if len(boxes) == 0:
-                continue
-
-            for box in boxes:
-                # Get bounding box coordinates
-                x1, y1, x2, y2 = box.xyxy[0].cpu().numpy().astype(int)
-
-                # Calculate head/face region (upper 40% of detected person)
-                height = y2 - y1
-                face_y1 = y1
-                face_y2 = int(y1 + height * 0.4)  # Top 40% of person detection
-
-                # Add some margin for better cropping
-                margin_x = int((x2 - x1) * 0.1)
-                margin_y = int((face_y2 - face_y1) * 0.1)
-
-                face_x1 = max(0, x1 - margin_x)
-                face_x2 = min(img.shape[1], x2 + margin_x)
-                face_y1 = max(0, face_y1 - margin_y)
-                face_y2 = min(img.shape[0], face_y2 + margin_y)
-
-                # Crop face from original image
-                face_img = img[face_y1:face_y2, face_x1:face_x2]
-
-                # Skip if crop is too small
-                if face_img.size == 0:
-                    continue
-
-                # Encode to base64
-                _, buffer = cv2.imencode(".jpg", face_img)
-                face_base64 = base64.b64encode(buffer).decode("utf-8")
-                cropped_faces.append(face_base64)
-
-        if len(cropped_faces) == 0:
-            raise HTTPException(status_code=404, detail="No faces detected")
+        for top, right, bottom, left in face_locations:
+            face_image = image[top:bottom, left:right]
+            face_image = cv2.cvtColor(face_image, cv2.COLOR_BGR2RGB)
+            face_image = cv2.resize(face_image, (256, 256))
+            face_image = cv2.imencode(".jpg", face_image)[1].tobytes()
+            face_image = base64.b64encode(face_image).decode("utf-8")
+            cropped_faces.append(face_image)
 
         return ImageResponse(faces=cropped_faces)
 
