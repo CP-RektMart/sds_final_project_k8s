@@ -56,9 +56,6 @@ export function DetectionResults() {
                 <Badge variant="secondary" className="text-base px-3 py-1">
                   {detectedFaces.length} Faces Detected
                 </Badge>
-                <span className="text-sm text-muted-foreground">
-                  Processing completed in 1.2s
-                </span>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -73,10 +70,6 @@ export function DetectionResults() {
                   <SelectItem value="webp">WEBP</SelectItem>
                 </SelectContent>
               </Select>
-              <Button onClick={handleDownload} size="lg">
-                <Download className="mr-2 h-4 w-4" />
-                Export as {format.toUpperCase()}
-              </Button>
             </div>
           </div>
         </CardContent>

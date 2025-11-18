@@ -136,7 +136,7 @@ export function ImageUpload() {
               >
                 {isProcessing ? (
                   <>
-                    <span className="animate-spin mr-2">⚡</span>
+                    <Activity className="mr-2 h-4 w-4" />
                     Processing...
                   </>
                 ) : (
