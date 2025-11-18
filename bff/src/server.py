@@ -6,8 +6,9 @@ import os
 app = FastAPI(title="Image Processing BFF", version="1.0.0")
 
 
-FILE_CONVERTER_URL = "http://localhost:8000"
-
+FILE_CONVERTER_URL = os.getenv("FILE_CONVERTER_URL")
+if not FILE_CONVERTER_URL:
+    raise ValueError("FILE_CONVERTER_URL is not set")
 
 # ==================== Models ====================
 
@@ -18,7 +19,7 @@ class ConvertImageRequest(BaseModel):
 
 
 class ConvertImageResponse(BaseModel):
-    converted_image_base64: str
+    converted_image_base64s: list[str]
 
 
 # ==================== Endpoints ====================
