@@ -1,0 +1,16 @@
+FROM python:3.13-slim
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /app
+
+COPY uv.lock .
+COPY pyproject.toml .
+
+RUN uv sync
+
+COPY src src
+
+EXPOSE 7000
+
+CMD [".venv/bin/fastapi", "run", "src/server.py", "--port=7000"]
