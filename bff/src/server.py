@@ -9,8 +9,11 @@ app = FastAPI(title="Image Processing BFF", version="1.0.0")
 FILE_CONVERTER_URL = os.getenv("FILE_CONVERTER_URL")
 if not FILE_CONVERTER_URL:
     raise ValueError("FILE_CONVERTER_URL is not set")
+print(f"FILE_CONVERTER_URL: {FILE_CONVERTER_URL}")
 
 # ==================== Models ====================
+
+# FILE_CONVERTER_URL="http://localhost:8000" uv run fastapi dev src/server.py --port 8001
 
 
 class ConvertImageRequest(BaseModel):
@@ -54,9 +57,10 @@ async def detect_faces(request: ConvertImageRequest):
             response.raise_for_status()
             result = response.json()
 
-            converted_image_base64 = result["converted_image_base64"]
+            converted_image_base64s = [result["converted_image_base64"]]
+            print(f"converted_image_base64s: {converted_image_base64s}")
 
-            return ConvertImageResponse(converted_image_base64=converted_image_base64)
+            return ConvertImageResponse(converted_image_base64s=converted_image_base64s)
 
     except httpx.TimeoutException:
         raise HTTPException(status_code=504, detail="File converter service timeout")
