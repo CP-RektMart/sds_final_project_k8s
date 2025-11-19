@@ -29,10 +29,6 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# build env
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
@@ -47,6 +43,15 @@ WORKDIR /app
 ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# Runtime environment variables (server-side only)
+ARG BFF_URL
+ARG FILE_CONVERTER_URL
+ARG FACE_RECOGNITION_URL
+
+ENV BFF_URL=$BFF_URL
+ENV FILE_CONVERTER_URL=$FILE_CONVERTER_URL
+ENV FACE_RECOGNITION_URL=$FACE_RECOGNITION_URL
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
