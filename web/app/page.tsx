@@ -1,6 +1,5 @@
-import { DetectionResults } from "@/components/detection-result";
 import { HealthCheck } from "@/components/health-check";
-import { ImageUpload } from "@/components/image-upload";
+import { DetectionSection } from "@/components/detection-section";
 
 export default function Home() {
   return (
@@ -25,21 +24,8 @@ export default function Home() {
             <HealthCheck />
           </section>
 
-          {/* Section 2: Image Upload */}
-          <section className="space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-semibold">Upload Image</h2>
-            </div>
-            <ImageUpload />
-          </section>
-
-          {/* Section 3: Detection Results */}
-          <section className="space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-semibold">Detection Results</h2>
-            </div>
-            <DetectionResults />
-          </section>
+          {/* Section 2 & 3: Image Upload and Detection Results */}
+          <DetectionSection />
         </div>
       </main>
     </div>

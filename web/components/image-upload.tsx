@@ -2,15 +2,26 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Upload, ImageIcon, X, Activity } from 'lucide-react'
 import { useState } from "react"
 import { useDropzone } from 'react-dropzone'
 
-export function ImageUpload() {
+interface ImageUploadProps {
+  onDetectionComplete?: (faces: string[], fileType?: string) => void;
+}
+
+export function ImageUpload({ onDetectionComplete }: ImageUploadProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  
+  const [targetFormat, setTargetFormat] = useState<string>("jpeg")
   const [isProcessing, setIsProcessing] = useState(false)
-  // we use react-dropzone's `open()` to trigger file dialog
+  const [error, setError] = useState<string | null>(null)
 
   // react-dropzone setup
   const onDrop = (acceptedFiles: File[]) => {
@@ -40,29 +51,36 @@ export function ImageUpload() {
   const handleDetect = async () => {
     if (!selectedImage) return
     setIsProcessing(true)
+    setError(null) 
 
     try {
-      // Extract MIME and base64 payload from data URL
+      // Extract base64 payload from data URL
       const match = selectedImage.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/)
-      const mime = match ? match[1] : 'application/octet-stream'
       const base64 = match ? match[2] : selectedImage.split(',')[1] || ''
 
-      // Send to backend as JSON (adjust endpoint as needed)
+      // Send to backend as JSON with lowercase format
       const res = await fetch('/api/detect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64, mime }),
+        body: JSON.stringify({
+          image: base64,
+          target_format: targetFormat.toLowerCase()
+        }),
       })
 
       if (!res.ok) {
-        const errText = await res.text()
-        throw new Error(errText || res.statusText)
+        const errData = await res.json().catch(() => ({ error: res.statusText }))
+        throw new Error(errData.error || res.statusText)
       }
 
       const data = await res.json()
-      console.log('detection response', data)
+      if (data.success && onDetectionComplete) {
+        onDetectionComplete(data.faces, data.fileType)
+      }
+      
     } catch (err) {
       console.error('detection error', err)
+      setError(err instanceof Error ? err.message : 'Detection failed')
     } finally {
       setIsProcessing(false)
     }
@@ -70,7 +88,6 @@ export function ImageUpload() {
 
   const clearImage = () => {
     setSelectedImage(null)
-    // no file input ref when using dropzone; clearing state is sufficient
   }
 
   return (
@@ -111,7 +128,12 @@ export function ImageUpload() {
           </div>
         ) : (
           <div className="space-y-4">
-              <div className="relative rounded-lg overflow-hidden bg-muted">
+            {error && (
+              <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+                {error}
+              </div>
+            )}
+            <div className="relative rounded-lg overflow-hidden bg-muted">
               {/* use a standard <img> for data URL preview to avoid Next/Image restrictions */}
               <img
                 src={selectedImage || "/placeholder.svg"}
@@ -127,28 +149,43 @@ export function ImageUpload() {
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <div className="flex gap-3">
-              <Button
-                onClick={handleDetect}
-                disabled={isProcessing}
-                className="flex-1"
-                size="lg"
-              >
-                {isProcessing ? (
-                  <>
-                    <Activity className="mr-2 h-4 w-4" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Activity className="mr-2 h-4 w-4" />
-                    Detect Faces
-                  </>
-                )}
-              </Button>
-              <Button variant="outline" size="lg" onClick={clearImage}>
-                Clear
-              </Button>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium whitespace-nowrap">Convert to:</label>
+                <Select value={targetFormat} onValueChange={setTargetFormat}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Select format" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="jpeg">JPEG</SelectItem>
+                    <SelectItem value="png">PNG</SelectItem>
+                    <SelectItem value="webp">WEBP</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleDetect}
+                  disabled={isProcessing}
+                  className="flex-1"
+                  size="lg"
+                >
+                  {isProcessing ? (
+                    <>
+                      <Activity className="mr-2 h-4 w-4" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Activity className="mr-2 h-4 w-4" />
+                      Detect Faces
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" size="lg" onClick={clearImage}>
+                  Clear
+                </Button>
+              </div>
             </div>
           </div>
         )}
