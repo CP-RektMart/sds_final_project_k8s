@@ -4,7 +4,6 @@ from pathlib import Path
 
 import requests
 
-
 def test_face_detection(image_path: str, output_dir: str = "output"):
     """
     Test the face detection service with an image file.
@@ -23,6 +22,9 @@ def test_face_detection(image_path: str, output_dir: str = "output"):
     # Prepare request
     payload = {"image": encoded_image}
 
+    # prepare saved image name
+    image_name = image_path.split("/")[-1].split(".")[0]
+
     # Send request to the service
     try:
         response = requests.post("http://localhost:8000/crop-faces", json=payload)
@@ -36,7 +38,7 @@ def test_face_detection(image_path: str, output_dir: str = "output"):
         # Save cropped faces
         for i, face_base64 in enumerate(faces):
             face_data = base64.b64decode(face_base64)
-            output_path = Path(output_dir) / f"face_{i + 1}.jpg"
+            output_path = Path(output_dir) / f"{image_name}_face_{i + 1}.jpg"
 
             with open(output_path, "wb") as f:
                 f.write(face_data)
