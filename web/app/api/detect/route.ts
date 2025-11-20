@@ -36,14 +36,9 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-
+    
     // Transform BFF response to frontend format
-    const faces = (data.converted_image_base64s || []).map((face: string) => {
-      if (face.startsWith('data:')) {
-        return face.split(',')[1];
-      }
-      return face;
-    });
+    const faces = data['cropped_faces'] || [];
 
     return NextResponse.json({
       success: true,
