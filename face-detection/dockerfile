@@ -22,4 +22,4 @@ COPY src src
 
 EXPOSE 7000
 
-CMD [".venv/bin/fastapi", "run", "src/server.py", "--port=7001"]
+CMD [".venv/bin/fastapi", "run", "src/server.py", "--port=7000"]
