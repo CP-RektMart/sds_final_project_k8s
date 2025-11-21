@@ -1,43 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web
-  namespace: sds
-  labels:
-    app: web
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: web
-  template:
-    metadata:
-      labels:
+    name: web
+    namespace: sds
+    labels:
         app: web
-    spec:
-      containers:
-        - name: web
-          image: ghcr.io/cp-rektmart/sds_final_project_k8s/web:latest
-          ports:
-            - containerPort: 3000
-          env:
-            - name: BFF_URL
-              value: http://bff:7000
-            - name: FILE_CONVERTER_URL
-              value: http://file-converter:7000
-            - name: FACE_RECOGNITION_URL
-              value: http://face-detection:7000
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: web
+    template:
+        metadata:
+            labels:
+                app: web
+        spec:
+            containers:
+                - name: web
+                  image: ghcr.io/cp-rektmart/sds_final_project_k8s/web:latest
+                  ports:
+                      - containerPort: 3000
+                  env:
+                      - name: BFF_URL
+                        value: http://bff:7000
+                      - name: FILE_CONVERTER_URL
+                        value: http://file-converter:7000
+                      - name: FACE_RECOGNITION_URL
+                        value: http://face-detection:7000
 
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 7000
-            initialDelaySeconds: 5
-            periodSeconds: 10
+                  livenessProbe:
+                      httpGet:
+                          path: /health
+                          port: 7000
+                      initialDelaySeconds: 5
+                      periodSeconds: 10
 
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 7000
-            initialDelaySeconds: 2
-            periodSeconds: 5
+                  readinessProbe:
+                      httpGet:
+                          path: /health
+                          port: 7000
+                      initialDelaySeconds: 2
+                      periodSeconds: 5
