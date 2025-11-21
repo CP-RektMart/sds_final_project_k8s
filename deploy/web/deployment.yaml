@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/cp-rekmart/sds_final_project_k8s/web:latest
+          image: ghcr.io/cp-rektmart/sds_final_project_k8s/web:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

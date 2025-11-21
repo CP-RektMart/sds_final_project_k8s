@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: face-detection
-          image: ghcr.io/cp-rekmart/sds_final_project_k8s/face-detection:latest
+          image: ghcr.io/cp-rektmart/sds_final_project_k8s/face-detection:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 7000
