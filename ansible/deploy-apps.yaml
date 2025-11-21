@@ -1,0 +1,63 @@
+- name: Deploy applications
+  hosts: master
+  become_user: "{{ ansible_user }}"
+  tasks:
+      - name: Create kubectl alias
+        lineinfile:
+            path: "/home/{{ ansible_user }}/.bashrc"
+            line: "alias kubectl='microk8s kubectl'"
+
+      - name: Copy deployment files
+        copy:
+            src: ../deploy/
+            dest: "/home/{{ ansible_user }}/deploy/"
+
+      - name: Add FACE_DETECTION_URL to BFF
+        lineinfile:
+            path: "/home/{{ ansible_user }}/deploy/bff/deployment.yaml"
+            insertafter: "FILE_CONVERTER_URL"
+            line: "            - name: FACE_DETECTION_URL"
+
+      - name: Add FACE_DETECTION_URL value
+        lineinfile:
+            path: "/home/{{ ansible_user }}/deploy/bff/deployment.yaml"
+            insertafter: "FACE_DETECTION_URL"
+            line: "              value: http://face-detection:7000"
+
+      - name: Create namespace
+        shell: microk8s kubectl apply -f deploy/namespace.yaml
+
+      - name: Deploy all services
+        shell: |
+            microk8s kubectl apply -f deploy/file-converter/
+            microk8s kubectl apply -f deploy/face-detection/
+            microk8s kubectl apply -f deploy/bff/
+            microk8s kubectl apply -f deploy/web/
+
+      - name: Wait for deployments
+        shell: microk8s kubectl wait --for=condition=available --timeout=600s deployment/{{ item }} -n sds
+        loop:
+            - file-converter
+            - face-detection
+            - bff
+            - web
+
+      - name: Get cluster status
+        shell: microk8s kubectl get all -n sds
+        register: status
+
+      - name: Display status
+        debug:
+            var: status.stdout_lines
+
+      - name: Get node IP
+        shell: hostname -I | awk '{print $1}'
+        register: node_ip
+
+      - name: Display access URLs
+        debug:
+            msg:
+                - "Web UI: http://{{ node_ip.stdout }}:30000"
+                - "BFF API: http://{{ node_ip.stdout }}:30001"
+                - "Face Detection API: http://{{ node_ip.stdout }}:30002"
+                - "File Converter API: http://{{ node_ip.stdout }}:30003"

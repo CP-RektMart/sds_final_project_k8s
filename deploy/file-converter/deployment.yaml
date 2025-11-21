@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: file-converter
-  namespace: sds
-  labels:
-    app: file-converter
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: file-converter
-  template:
-    metadata:
-      labels:
+    name: file-converter
+    namespace: sds
+    labels:
         app: file-converter
-    spec:
-      containers:
-        - name: file-converter
-          image: ghcr.io/cp-rektmart/sds_final_project_k8s/file-converter:latest
-          ports:
-            - containerPort: 7000
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: file-converter
+    template:
+        metadata:
+            labels:
+                app: file-converter
+        spec:
+            containers:
+                - name: file-converter
+                  image: ghcr.io/cp-rektmart/sds_final_project_k8s/file-converter:latest
+                  ports:
+                      - containerPort: 7000
 
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 7000
-            initialDelaySeconds: 5
-            periodSeconds: 10
+                  livenessProbe:
+                      httpGet:
+                          path: /health
+                          port: 7000
+                      initialDelaySeconds: 5
+                      periodSeconds: 10
 
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 7000
-            initialDelaySeconds: 2
-            periodSeconds: 5
+                  readinessProbe:
+                      httpGet:
+                          path: /health
+                          port: 7000
+                      initialDelaySeconds: 2
+                      periodSeconds: 5

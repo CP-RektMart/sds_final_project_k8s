@@ -1,19 +1,19 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress
-  namespace: sds
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    name: ingress
+    namespace: sds
+    annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  rules:
-    - host: web
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: web
-                port:
-                  number: 3000
+    rules:
+        - host: web
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: web
+                            port:
+                                number: 3000
