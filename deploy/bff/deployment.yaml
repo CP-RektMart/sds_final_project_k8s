@@ -18,7 +18,6 @@ spec:
       containers:
         - name: bff
           image: ghcr.io/cp-rektmart/sds_final_project_k8s/bff:latest
-          imagePullPolicy: Always
           ports:
             - containerPort: 7000
           env:
