@@ -24,3 +24,5 @@ spec:
           env:
             - name: FILE_CONVERTER_URL
               value: http://file-converter:7000
+            - name: FACE_DETECTION_URL
+              value: http://face-detection:7000

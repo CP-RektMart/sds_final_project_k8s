@@ -5,7 +5,7 @@ metadata:
   namespace: sds
 spec:
   selector:
-    app: bff # must match your deployment labels
+    app: bff
   type: NodePort
   ports:
     - protocol: TCP

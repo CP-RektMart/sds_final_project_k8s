@@ -18,6 +18,13 @@ spec:
       containers:
         - name: web
           image: teegooodgood/sds-web:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
+          env:
+            - name: BFF_URL
+              value: http://bff:7000
+            - name: FILE_CONVERTER_URL
+              value: http://file-converter:7000
+            - name: FACE_RECOGNITION_URL
+              value: http://face-detection:7000

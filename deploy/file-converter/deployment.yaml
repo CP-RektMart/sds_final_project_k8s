@@ -18,6 +18,6 @@ spec:
       containers:
         - name: file-converter
           image: teegooodgood/sds-file-converter:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 7000
