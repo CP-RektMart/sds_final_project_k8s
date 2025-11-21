@@ -26,3 +26,17 @@ spec:
               value: http://file-converter:7000
             - name: FACE_DETECTION_URL
               value: http://face-detection:7000
+
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: 7000
+        initialDelaySeconds: 5
+        periodSeconds: 10
+
+      readinessProbe:
+        httpGet:
+          path: /health
+          port: 7000
+        initialDelaySeconds: 2
+        periodSeconds: 5
