@@ -29,16 +29,16 @@ spec:
             - name: FACE_RECOGNITION_URL
               value: http://face-detection:7000
 
-      livenessProbe:
-        httpGet:
-          path: /health
-          port: 7000
-        initialDelaySeconds: 5
-        periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 7000
+            initialDelaySeconds: 5
+            periodSeconds: 10
 
-      readinessProbe:
-        httpGet:
-          path: /health
-          port: 7000
-        initialDelaySeconds: 2
-        periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 7000
+            initialDelaySeconds: 2
+            periodSeconds: 5
