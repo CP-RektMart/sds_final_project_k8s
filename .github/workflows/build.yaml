@@ -38,6 +38,6 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ env.REPO_NAME }}/${{ matrix.service }}:latest
-          context: .
+          context: ${{ matrix.service }}
           file: ./${{ matrix.service }}/dockerfile
           platforms: "linux/arm64,linux/amd64"
