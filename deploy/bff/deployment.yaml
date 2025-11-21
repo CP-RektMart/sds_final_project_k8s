@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: bff
-          image: ghcr.io/cp-rekmart/sds_final_project_k8s/bff:latest
+          image: ghcr.io/cp-rektmart/sds_final_project_k8s/bff:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 7000
