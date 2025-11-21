@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: file-converter
-          image: teegooodgood/sds-file-converter:latest
+          image: ghcr.io/cp-rekmart/sds_final_project_k8s/file-converter:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 7000
